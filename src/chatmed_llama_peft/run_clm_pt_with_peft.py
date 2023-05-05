@@ -478,7 +478,7 @@ def main():
     with training_args.main_process_first(desc="dataset map tokenization and grouping"):
         raw_datasets = load_dataset(
             data_args.dataset_name,
-            cache_dir=model_args.cache_dir,
+            cache_dir=data_args.dataset_cache_dir,
             use_auth_token=True if model_args.use_auth_token else None,
         )
         tokenized_dataset = raw_datasets.map(
@@ -488,7 +488,7 @@ def main():
                     remove_columns=["query", "response"],
                     load_from_cache_file=False,
                     keep_in_memory=False,
-                    cache_file_names = {k: os.path.join(cache_dir, f'tokenized.arrow') for k in raw_datasets},
+                    cache_file_names = {k: os.path.join(data_args.dataset_cache_dir, f'tokenized.arrow') for k in raw_datasets},
                     desc="Running tokenizer on dataset",
                 )
         print("tokenized_dataset: ", tokenized_dataset)
@@ -499,7 +499,7 @@ def main():
                     num_proc=data_args.preprocessing_num_workers,
                     load_from_cache_file=True,
                     keep_in_memory=False,
-                    cache_file_names = {k: os.path.join(cache_dir, f'grouped.arrow') for k in tokenized_dataset},
+                    cache_file_names = {k: os.path.join(data_args.dataset_cache_dir, f'grouped.arrow') for k in tokenized_dataset},
                     desc=f"Grouping texts in chunks of {block_size}",
                 )
         # processed_dataset = grouped_datasets
