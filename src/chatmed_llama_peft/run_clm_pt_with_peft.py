@@ -240,8 +240,11 @@ class DataTrainingArguments:
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
 
-    dataset_dir: Optional[str] = field(
+    dataset_name: Optional[str] = field(
         default=None, metadata={"help": "The name of the dataset to use (via the datasets library)."}
+    )
+    dataset_cache_dir: Optional[str] = field(
+        default=None, metadata={"help": "where to store the cached data."}
     )
     dataset_config_name: Optional[str] = field(
         default=None, metadata={"help": "The configuration name of the dataset to use (via the datasets library)."}
@@ -473,10 +476,8 @@ def main():
 
 
     with training_args.main_process_first(desc="dataset map tokenization and grouping"):
-        cache_dir = "./checkpoints/"
         raw_datasets = load_dataset(
-            "json",
-            data_files=data_args.dataset_dir,
+            data_args.dataset_name,
             cache_dir=model_args.cache_dir,
             use_auth_token=True if model_args.use_auth_token else None,
         )

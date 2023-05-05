@@ -5,23 +5,25 @@ lora_trainable="q_proj,v_proj,k_proj,o_proj,gate_proj,down_proj,up_proj"
 modules_to_save="embed_tokens,lm_head"
 lora_dropout=0.1
 pretrained_model="./resources/chinese-llama-alpaca-plus-lora-7b"
-dataset_dir="预训练数据/datasets/chatgpt_data/ChatMed-v0.3.json"
+dataset_name="michaelwzhu/ChatMed_Consult_Dataset"
+dataset_cache_dir="./data/"
 per_device_batch_size=2
 per_device_batch_size=2
 gradient_accumulation_steps=32
 training_steps=20000
-output_dir="./medical_prompts/experiments/output/chatmed-llama-7b-pt-v0"
-deepspeed_config_file="medical_prompts/src/ft_llama_lora/deepspeed_config_zero3_offload.json"
+output_dir="./experiments/output/chatmed-llama-7b-pt-v0"
+deepspeed_config_file="src/chatmed_llama_peft/deepspeed_config_zero3_offload.json"
 
 torchrun \
   --nnodes 1 \
   --nproc_per_node 4 \
   --rdzv_id=1 --rdzv_backend=c10d --rdzv_endpoint=localhost:12356 \
-   medical_prompts/src/ft_llama_lora/run_clm_pt_with_peft.py \
+   src/chatmed_llama_peft/run_clm_pt_with_peft.py \
    --deepspeed ${deepspeed_config_file} \
     --model_name_or_path ${pretrained_model} \
     --tokenizer_name_or_path ${pretrained_model} \
-    --dataset_dir ${dataset_dir} \
+    --dataset_name ${dataset_name} \
+    --dataset_cache_dir ${dataset_cache_dir} \
     --validation_split_percentage 0.001 \
     --per_device_train_batch_size ${per_device_batch_size} \
     --per_device_eval_batch_size ${per_device_batch_size} \

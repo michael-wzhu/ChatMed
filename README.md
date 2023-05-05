@@ -14,13 +14,13 @@
 
 为推动LLM在中文医疗领域的发展和落地，提升LLM的医疗知识与回答医学咨询的能力，我们现推出**ChatMed**系列中文医疗大规模语言模型:
 
-- 🚀 [ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult) : 基于[中文医疗在线医疗咨询数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset)的50w+在线问诊+ChatGPT回复作为训练集。模型主干为[LlaMA-7b](https://github.com/facebookresearch/llama),融合了[Chinese-LlaMA-Alpaca](https://github.com/ymcui/Chinese-LLaMA-Alpaca)的LoRA权重与中文扩展词表，然后再进行基于LoRA的参数高效微调。我们将全部代码都进行了公开。我们也将部署一个在线Gradio demo, 敬请关注。
+- 🚀 [ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult) : 基于[中文医疗在线问诊数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset)的50w+在线问诊+ChatGPT回复作为训练集。模型主干为[LlaMA-7b](https://github.com/facebookresearch/llama),融合了[Chinese-LlaMA-Alpaca](https://github.com/ymcui/Chinese-LLaMA-Alpaca)的LoRA权重与中文扩展词表，然后再进行基于LoRA的参数高效微调。我们将全部代码都进行了公开。我们也将部署一个在线Gradio demo, 敬请关注。
 - ⏳ [ChatMed-TCM](https://huggingface.co/michaelwzhu/ChatMed-TCM) : 大模型赋能中医药传承。这一模型的训练数据为[中医药指令数据集ChatMed_TCM_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_TCM_Dataset)。以我们开源的[中医药知识图谱](https://github.com/ywjawmw/TCM_KG)为基础，采用以实体为中心的自指令方法(entity-centric self-instruct)，调用ChatGPT得到2.6w+的围绕中医药的指令数据。ChatMed-TCM模型也是以LlaMA为底座，采用LoRA微调得到。
 
 
 ----
 
-[Text2DT](https://github.com/michael-wzhu/Text2DT_Baseline) | [中文医疗大模型评测基准PromptCBLUE](https://github.com/michael-wzhu/PromptCBLUE) | [中文医疗在线医疗咨询数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) | [中医药指令数据集ChatMed_TCM_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) | [中医药知识图谱](https://github.com/ywjawmw/TCM_KG)
+[Text2DT](https://github.com/michael-wzhu/Text2DT_Baseline) | [中文医疗大模型评测基准PromptCBLUE](https://github.com/michael-wzhu/PromptCBLUE) | [中文医疗在线问诊数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) | [中医药指令数据集ChatMed_TCM_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) | [中医药知识图谱](https://github.com/ywjawmw/TCM_KG)
 
 
 ## 更新
@@ -32,7 +32,7 @@
 
 ### 模型介绍
 
-- 训练数据：[中文医疗在线医疗咨询数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset)的50w+在线问诊+ChatGPT回复作为训练集。我们发现，在线爬取的问诊数据，虽然可以反映真实世界的用户/患者的问诊需求，但是一般网上的回答良莠不齐。所以我们调用ChatGPT (`gpt-3.5-turbo`)得到问诊的回复。 (⏳ todo: 实现一个评估模型，给人工回复进行评分。调用大模型的token毕竟烧钱)
+- 训练数据：[中文医疗在线问诊数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset)的50w+在线问诊+ChatGPT回复作为训练集。我们发现，在线爬取的问诊数据，虽然可以反映真实世界的用户/患者的问诊需求，但是一般网上的回答良莠不齐。所以我们调用ChatGPT (`gpt-3.5-turbo`)得到问诊的回复。 (⏳ todo: 实现一个评估模型，给人工回复进行评分。调用大模型的token毕竟烧钱)
 - 模型基座：目前我们开源了基于LlaMA-7b的[ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult)模型。后续我们将会尝试不同的模型底座，比如LlaMA-13b，MOSS等。
 - 代码：模型训练所需要的全部代码见[ChatMed-Consult 训练代码](./src/chatmed_llama_peft)。训练中我们借助DeepSpeed(ZeRO stage 3)实现分布式训练。
 - 模型权重下载：由于我们目前采用模型是基于Llama-7b进行参数高效微调，所以我们只上传了参数高效微调模块的权重，见[ChatMed-Consult模型权重](https://huggingface.co/michaelwzhu/ChatMed-Consult)。
@@ -53,6 +53,18 @@ python src/web_services/web_service_test.py
 ```
 
 上面的脚本主要是运行了test_examples.json文件中提供了测试用例。在使用自己的测试用例时，请注意保持格式一致。
+
+### 训练
+
+首先，大家需要准备好LlaMA-7b底座模型，保存于`resources/chinese-llama-alpaca-plus-lora-7b`路径。数据集采用[中文医疗在线医疗咨询数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset)。我们采用deepspeed实现分布式训练：
+
+```bash
+./src/chatmed_llama_peft/run_train.sh
+```
+
+训练脚本中使用的是4张显卡，大家根据自己的服务器情况调整超参数。
+
+
 
 
 ## 效果对比
