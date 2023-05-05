@@ -34,7 +34,7 @@
 
 - 训练数据：[中文医疗在线医疗咨询数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset)的50w+在线问诊+ChatGPT回复作为训练集。我们发现，在线爬取的问诊数据，虽然可以反映真实世界的用户/患者的问诊需求，但是一般网上的回答良莠不齐。所以我们调用ChatGPT (`gpt-3.5-turbo`)得到问诊的回复。 (⏳ todo: 实现一个评估模型，给人工回复进行评分。调用大模型的token毕竟烧钱)
 - 模型基座：目前我们开源了基于LlaMA-7b的[ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult)模型。后续我们将会尝试不同的模型底座，比如LlaMA-13b，MOSS等。
-- 代码：模型训练所需要的全部代码见[ChatMed-Consult 训练代码](./src/chatmed_llama_peft)。
+- 代码：模型训练所需要的全部代码见[ChatMed-Consult 训练代码](./src/chatmed_llama_peft)。训练中我们借助DeepSpeed(ZeRO stage 3)实现分布式训练。
 - 模型权重下载：由于我们目前采用模型是基于Llama-7b进行参数高效微调，所以我们只上传了参数高效微调模块的权重，见[ChatMed-Consult模型权重](https://huggingface.co/michaelwzhu/ChatMed-Consult)。
 
 ### 快速上手
