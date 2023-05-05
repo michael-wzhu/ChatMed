@@ -14,18 +14,18 @@
 
 为推动LLM在中文医疗领域的发展和落地，提升LLM的医疗知识与回答医学咨询的能力，我们现推出**ChatMed**系列中文医疗大规模语言模型:
 
-- 🚀 [ChatMed-Consult](xxxx) : 基于[中文医疗在线医疗咨询数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset)的50w+在线问诊+ChatGPT回复作为训练集。模型主干为[LlaMA-7b](https://github.com/facebookresearch/llama),融合了[Chinese-LlaMA-Alpaca](https://github.com/ymcui/Chinese-LLaMA-Alpaca)的LoRA权重与中文扩展词表，然后再进行基于LoRA的参数高效微调。我们将全部代码都进行了公开。我们也将部署一个在线demo，见[Gradio-demo: TBD](xxx)。
-- 🚀 [ChatMed-TCM](xxx) : 大模型赋能中医药传承。这一模型的训练数据为[中医药指令数据集ChatMed_TCM_Dataset](xxx)。以我们开源的[中医药知识图谱](xxx)为基础，采用以实体为中心的自指令方法(entity-centric self-instruct)，调用ChatGPT得到2.6w+的围绕中医药的指令数据。ChatMed-TCM模型也是以LlaMA为底座，采用LoRA微调得到。
+- 🚀 [ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult) : 基于[中文医疗在线医疗咨询数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset)的50w+在线问诊+ChatGPT回复作为训练集。模型主干为[LlaMA-7b](https://github.com/facebookresearch/llama),融合了[Chinese-LlaMA-Alpaca](https://github.com/ymcui/Chinese-LLaMA-Alpaca)的LoRA权重与中文扩展词表，然后再进行基于LoRA的参数高效微调。我们将全部代码都进行了公开。我们也将部署一个在线Gradio demo, 敬请关注。
+- ⏳ [ChatMed-TCM](https://huggingface.co/michaelwzhu/ChatMed-TCM) : 大模型赋能中医药传承。这一模型的训练数据为[中医药指令数据集ChatMed_TCM_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_TCM_Dataset)。以我们开源的[中医药知识图谱](https://github.com/ywjawmw/TCM_KG)为基础，采用以实体为中心的自指令方法(entity-centric self-instruct)，调用ChatGPT得到2.6w+的围绕中医药的指令数据。ChatMed-TCM模型也是以LlaMA为底座，采用LoRA微调得到。
 
 
 ----
 
-[Text2DT](https://github.com/michael-wzhu/Text2DT_Baseline) | [中文医疗大模型评测基准PromptCBLUE](https://github.com/michael-wzhu/PromptCBLUE) | [中文医疗在线医疗咨询数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) | [中医药指令数据集ChatMed_TCM_Dataset](xxx)
+[Text2DT](https://github.com/michael-wzhu/Text2DT_Baseline) | [中文医疗大模型评测基准PromptCBLUE](https://github.com/michael-wzhu/PromptCBLUE) | [中文医疗在线医疗咨询数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) | [中医药指令数据集ChatMed_TCM_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) | [中医药知识图谱](https://github.com/ywjawmw/TCM_KG)
 
 
 ## 更新
 
-2023/5/05 开源[ChatMed-Consult](xxxx)模型;
+2023/5/05 开源[ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult)模型;
 
 
 ## ChatMed-Consult模型介绍
@@ -33,15 +33,15 @@
 ### 模型介绍
 
 - 训练数据：[中文医疗在线医疗咨询数据集ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset)的50w+在线问诊+ChatGPT回复作为训练集。我们发现，在线爬取的问诊数据，虽然可以反映真实世界的用户/患者的问诊需求，但是一般网上的回答良莠不齐。所以我们调用ChatGPT (`gpt-3.5-turbo`)得到问诊的回复。 (⏳ todo: 实现一个评估模型，给人工回复进行评分。调用大模型的token毕竟烧钱)
-- 模型基座：目前我们开源了基于LlaMA-7b的[ChatMed-Consult](xxxx)模型。后续我们将会尝试不同的模型底座，比如LlaMA-13b，MOSS等。
+- 模型基座：目前我们开源了基于LlaMA-7b的[ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult)模型。后续我们将会尝试不同的模型底座，比如LlaMA-13b，MOSS等。
 - 代码：模型训练所需要的全部代码见[ChatMed-Consult 训练代码](./src/chatmed_llama_peft)。
-- 模型权重下载：由于我们目前采用模型是基于Llama-7b进行参数高效微调，所以我们只上传了参数高效微调模块的权重，见[ChatMed-Consult模型权重](xxx)。
+- 模型权重下载：由于我们目前采用模型是基于Llama-7b进行参数高效微调，所以我们只上传了参数高效微调模块的权重，见[ChatMed-Consult模型权重](https://huggingface.co/michaelwzhu/ChatMed-Consult)。
 
 ### 快速上手
 
-在使用[ChatMed-Consult](xxxx)之前，大家需要准备好LlaMA-7b底座模型，详细操作见[LlaMA-7b模型准备](./src/chatmed_llama_peft/LlaMA-7b模型准备.md)。
+在使用[ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult)之前，大家需要准备好LlaMA-7b底座模型，详细操作见[LlaMA-7b模型准备](./src/chatmed_llama_peft/LlaMA-7b模型准备.md)。
 
-LlaMA-7b底座模型准备好后，下载[ChatMed-Consult的LoRA权重](xxxx)，在3090显卡(或者更强的显卡) 运行以下命令，启动一个简单的基于flask的web service:
+LlaMA-7b底座模型准备好后，下载[ChatMed-Consult的LoRA权重](https://huggingface.co/michaelwzhu/ChatMed-Consult)，在3090显卡(或者更强的显卡) 运行以下命令，启动一个简单的基于flask的web service:
 
 ```bash
 python src/web_services/web_service_simple.py
@@ -57,7 +57,7 @@ python src/web_services/web_service_test.py
 
 ## 效果对比
 
-我们对比了经过权重转化与合并的[中文LlaMA-7b](./src/chatmed_llama_peft/LlaMA-7b模型准备.md)，以及经过了[ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) 和LoRA微调的[ChatMed-Consult](xxxx)模型。下面是五个典型例子的对比。更多测试样例见[More test examples](./src/chatmed_llama_peft/test_responses.json)
+我们对比了经过权重转化与合并的[中文LlaMA-7b](./src/chatmed_llama_peft/LlaMA-7b模型准备.md)，以及经过了[ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) 和LoRA微调的[ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult)模型。下面是五个典型例子的对比。更多测试样例见[More test examples](./src/chatmed_llama_peft/test_responses.json)
 
 
 | 问诊问题 | 中文LlaMA-7b | ChatMed-Consult |
