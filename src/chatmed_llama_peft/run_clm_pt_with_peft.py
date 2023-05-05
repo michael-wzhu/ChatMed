@@ -60,7 +60,7 @@ from sklearn.metrics import accuracy_score
 import  sys
 sys.path.append("./")
 
-from peft import LoraConfig, TaskType, get_peft_model, PeftModel, get_peft_model_state_dict
+from src.peft import LoraConfig, TaskType, get_peft_model, PeftModel, get_peft_model_state_dict
 
 
 def accuracy(predictions, references, normalize=True, sample_weight=None):
