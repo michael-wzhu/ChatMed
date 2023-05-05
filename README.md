@@ -39,7 +39,7 @@
 
 ### 快速上手
 
-在使用[ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult)之前，大家需要准备好LlaMA-7b底座模型，详细操作见[LlaMA-7b模型准备](./src/chatmed_llama_peft/LlaMA-7b模型准备.md)。
+在使用[ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult)之前，大家需要准备好LlaMA-7b底座模型，详细操作见[LlaMA-7b模型准备](https://github.com/michael-wzhu/ChatMed/blob/main/src/chatmed_llama_peft/LlaMA-7b%E6%A8%A1%E5%9E%8B%E5%87%86%E5%A4%87.md)。
 
 LlaMA-7b底座模型准备好后，下载[ChatMed-Consult的LoRA权重](https://huggingface.co/michaelwzhu/ChatMed-Consult)，在3090显卡(或者更强的显卡) 运行以下命令，启动一个简单的基于flask的web service:
 
@@ -69,7 +69,7 @@ python src/web_services/web_service_test.py
 
 ## 效果对比
 
-我们对比了经过权重转化与合并的[中文LlaMA-7b](./src/chatmed_llama_peft/LlaMA-7b模型准备.md)，以及经过了[ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) 和LoRA微调的[ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult)模型。下面是五个典型例子的对比。更多测试样例见[More test examples](./src/chatmed_llama_peft/test_responses.json)
+我们对比了经过权重转化与合并的[中文LlaMA-7b](https://github.com/michael-wzhu/ChatMed/blob/main/src/chatmed_llama_peft/LlaMA-7b%E6%A8%A1%E5%9E%8B%E5%87%86%E5%A4%87.md)，以及经过了[ChatMed_Consult_Dataset](https://huggingface.co/datasets/michaelwzhu/ChatMed_Consult_Dataset) 和LoRA微调的[ChatMed-Consult](https://huggingface.co/michaelwzhu/ChatMed-Consult)模型。下面是五个典型例子的对比。更多测试样例见[More test examples](./src/chatmed_llama_peft/test_responses.json)
 
 
 | 问诊问题 | 中文LlaMA-7b | ChatMed-Consult |

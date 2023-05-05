@@ -7,12 +7,9 @@ from transformers import AutoConfig, LlamaForCausalLM, LlamaTokenizer, AutoModel
 import sys
 sys.path.append("./")
 
-# model_path = "/public/home/xlwang2/codes/Med_Prompts/models--BelleGroup--BELLE-7B-2M/snapshots/a9076d928eff1d94fe6b4372ba2bd3a800dc10a1"
-# model_path = "./resources/chinese-llama-alpaca-plus-lora-7b"
-from peft import LoraConfig, TaskType, get_peft_model
+from peft import LoraConfig, TaskType, get_peft_model, PeftModel
 
 model_path = "./resources/chinese-llama-alpaca-plus-lora-7b"
-
 config = AutoConfig.from_pretrained(
     model_path,
 )
@@ -20,17 +17,12 @@ print(config)
 
 with torch.no_grad():
     torch_dtype = torch.float16
-    # model = LlamaForCausalLM.from_pretrained(
-    #     model_path,
-    #     config=config,
-    #     torch_dtype=torch_dtype,
-    #     # low_cpu_mem_usage=True
-    # )
-    model = AutoModelForCausalLM.from_config(
-        config,
-        torch_dtype=torch_dtype
+    model = LlamaForCausalLM.from_pretrained(
+        model_path,
+        config=config,
+        torch_dtype=torch_dtype,
+        # low_cpu_mem_usage=True
     )
-    print(model)
     model = model.cuda()
 
     tokenizer = LlamaTokenizer.from_pretrained(
@@ -41,33 +33,9 @@ with torch.no_grad():
     model.resize_token_embeddings(len(tokenizer))
 
     # 加载lora
-    trainable = "q_proj,v_proj,k_proj,o_proj,gate_proj,down_proj,up_proj"
-    target_modules = trainable.split(',')
-    modules_to_save = None
-    lora_rank = 8
-    lora_dropout = 0.1
-    lora_alpha = 32
-    print(target_modules)
-    print(lora_rank)
-    peft_config = LoraConfig(
-        task_type=TaskType.CAUSAL_LM,
-        target_modules=target_modules,
-        inference_mode=False,
-        r=lora_rank,
-        lora_alpha=lora_alpha,
-        lora_dropout=lora_dropout,
-        modules_to_save=None)
-    model = get_peft_model(model, peft_config)
-    model.print_trainable_parameters()
-
-    # 加载训练后的参数
-    path = "./medical_prompts/experiments/output/chatmed-llama-7b-pt-v0/checkpoint-100-32"
-    state_dict = torch.load(path)
-    model.load_state_dict(state_dict, strict=False)
-    model.print_trainable_parameters()
-    for n, p in model.named_parameters():
-        print(n, p.requires_grad)
-
+    # peft_model_path = "resources/ChatMed-Consult_llama_lora_pt_v0"
+    peft_model_path = "michaelwzhu/ChatMed-Consult"
+    model = PeftModel.from_pretrained(model, peft_model_path)
     model.eval()
 
 
@@ -86,7 +54,7 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
-@app.route("/llama_generate", methods=["POST"])
+@app.route("/chatmed_generate", methods=["POST"])
 def cough_predict():
     input_data = json.loads(
         request.get_data().decode("utf-8")
@@ -127,7 +95,7 @@ app.run(host="0.0.0.0", port=9005, debug=False)
 
 '''
 
-CUDA_VISIBLE_DEVICES=2 python web_demos/chatmed_llama_v0/web_service_simple.py
+CUDA_VISIBLE_DEVICES=2 python src/web_services/web_service_simple.py
 
 
 '''
