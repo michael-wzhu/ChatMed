@@ -24,7 +24,8 @@ def test_service(input_text):
           "max_new_tokens": 1024,
     }
     request = urllib.request.Request(
-        url='http://127.0.0.1:9005/chatmed_generate',
+        # url='http://127.0.0.1:9005/chatmed_generate',
+        url='http://219.228.135.162:9005/chatmed_generate',
         headers=header,
         data=json.dumps(data).encode('utf-8')
     )
@@ -48,6 +49,7 @@ if __name__ == "__main__":
                 continue
 
             line = json.loads(line)
+            print(line)
 
             t0 = time.time()
             result = test_service(line["query"])
