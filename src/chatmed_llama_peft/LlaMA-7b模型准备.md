@@ -16,7 +16,7 @@
 
 ### 融合Chinese-LlaMA-Alpaca
 
-[Chinese-LlaMA-Alpaca](xxx)项目提供了使得LlaMA模型更适应于中文场景的lora权重和经过继续预训练的embedding权重。我们采用其脚本将其权重合并到模型主干中：
+[Chinese-LlaMA-Alpaca](https://github.com/michael-wzhu/ChatMed/tree/main/src/chatmed_llama_peft)项目提供了使得LlaMA模型更适应于中文场景的lora权重和经过继续预训练的embedding权重。我们采用其脚本将其权重合并到模型主干中：
 
 ```bash
 python src/chatmed_llama_peft/merge_llama_with_chinese_lora.py \
