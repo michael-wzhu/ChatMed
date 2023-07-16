@@ -12,14 +12,13 @@ per_device_batch_size=2
 gradient_accumulation_steps=32
 training_steps=20000
 output_dir="./experiments/output/chatmed-llama-7b-pt-v0"
-deepspeed_config_file="src/chatmed_llama_peft/deepspeed_config_zero3_offload.json"
+# deepspeed_config_file="src/chatmed_llama_peft/deepspeed_config_zero3_offload.json"
 
 torchrun \
   --nnodes 1 \
   --nproc_per_node 4 \
   --rdzv_id=1 --rdzv_backend=c10d --rdzv_endpoint=localhost:12356 \
    src/chatmed_llama_peft/run_clm_pt_with_peft.py \
-   --deepspeed ${deepspeed_config_file} \
     --model_name_or_path ${pretrained_model} \
     --tokenizer_name_or_path ${pretrained_model} \
     --dataset_name ${dataset_name} \
@@ -52,3 +51,5 @@ torchrun \
     --modules_to_save ${modules_to_save} \
     --lora_dropout ${lora_dropout} \
     --torch_dtype float16
+
+#   --deepspeed ${deepspeed_config_file} \

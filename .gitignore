@@ -14,8 +14,11 @@ tmps/*
 
 wandb/*
 
+scripts/*
+
 tmp/*
 datasets/*
+data/*
 
 *.log
 

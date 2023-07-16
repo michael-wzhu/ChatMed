@@ -22,6 +22,8 @@ https://huggingface.co/models?filter=text-generation
 # You can also adapt this script on your own causal language modeling task. Pointers for this are left as comments.
 
 import logging
+
+import jieba
 import numpy as np
 import math
 import os
@@ -35,6 +37,9 @@ import torch
 from datasets import load_dataset, concatenate_datasets
 
 import transformers
+from nltk.translate.bleu_score import sentence_bleu
+from rouge_chinese import Rouge
+
 from transformers import (
     CONFIG_MAPPING,
     MODEL_FOR_CAUSAL_LM_MAPPING,
@@ -62,6 +67,8 @@ sys.path.append("./")
 
 from peft import LoraConfig, TaskType, get_peft_model, PeftModel, get_peft_model_state_dict
 
+os.environ["WANDB_MODE"] = "disable"
+
 
 def accuracy(predictions, references, normalize=True, sample_weight=None):
         return {
@@ -69,13 +76,14 @@ def accuracy(predictions, references, normalize=True, sample_weight=None):
                 accuracy_score(references, predictions, normalize=normalize, sample_weight=sample_weight)
             )
         }
-def compute_metrics(eval_preds):
-    preds, labels = eval_preds
-    # preds have the same shape as the labels, after the argmax(-1) has been calculated
-    # by preprocess_logits_for_metrics but we need to shift the labels
-    labels = labels[:, 1:].reshape(-1)
-    preds = preds[:, :-1].reshape(-1)
-    return accuracy(predictions=preds, references=labels)
+
+# def compute_metrics(eval_preds):
+#     preds, labels = eval_preds
+#     # preds have the same shape as the labels, after the argmax(-1) has been calculated
+#     # by preprocess_logits_for_metrics but we need to shift the labels
+#     labels = labels[:, 1:].reshape(-1)
+#     preds = preds[:, :-1].reshape(-1)
+#     return accuracy(predictions=preds, references=labels)
 
 
 def preprocess_logits_for_metrics(logits, labels):
@@ -478,7 +486,8 @@ def main():
 
     with training_args.main_process_first(desc="dataset map tokenization and grouping"):
         raw_datasets = load_dataset(
-            data_args.dataset_name,
+            "json",
+            data_files=data_args.dataset_name,
             cache_dir=data_args.dataset_cache_dir,
             use_auth_token=True if model_args.use_auth_token else None,
         )
@@ -505,6 +514,41 @@ def main():
                 )
         # processed_dataset = grouped_datasets
         lm_datasets = grouped_datasets["train"].train_test_split(test_size =0.003)
+
+    def compute_metrics(eval_preds):
+        preds, labels = eval_preds
+        if isinstance(preds, tuple):
+            preds = preds[0]
+        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
+        if data_args.ignore_pad_token_for_loss:
+            # Replace -100 in the labels as we can't decode them.
+            labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
+        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+
+        score_dict = {
+            "rouge-1": [],
+            "rouge-2": [],
+            "rouge-l": [],
+            "bleu-4": []
+        }
+        for pred, label in zip(decoded_preds, decoded_labels):
+            hypothesis = list(jieba.cut(pred))
+            reference = list(jieba.cut(label))
+            rouge = Rouge()
+            hypothesis = ' '.join(hypothesis)
+            if not hypothesis:
+                hypothesis = "-"
+            scores = rouge.get_scores(hypothesis, ' '.join(reference))
+            result = scores[0]
+
+            for k, v in result.items():
+                score_dict[k].append(round(v["f"] * 100, 4))
+            bleu_score = sentence_bleu([list(label)], list(pred), smoothing_function=SmoothingFunction().method3)
+            score_dict["bleu-4"].append(round(bleu_score * 100, 4))
+
+        for k, v in score_dict.items():
+            score_dict[k] = float(np.mean(v))
+        return score_dict
 
     if training_args.do_train:
         train_dataset = lm_datasets['train']
@@ -540,8 +584,9 @@ def main():
             revision=model_args.model_revision,
             use_auth_token=True if model_args.use_auth_token else None,
             torch_dtype=torch_dtype,
+            # device_map="auto",
             # low_cpu_mem_usage=True
-        )
+        ).half()
     else:
         model = AutoModelForCausalLM.from_config(config)
         n_params = sum({p.data_ptr(): p.numel() for p in model.parameters()}.values())
@@ -575,7 +620,6 @@ def main():
     ).__get__(model, type(model))
     for n, p in model.named_parameters():
         print(n, p.requires_grad)
-
 
     # Initialize our Trainer
     trainer = Trainer(
@@ -632,8 +676,6 @@ def main():
 
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
-
-
 
 
 if __name__ == "__main__":
