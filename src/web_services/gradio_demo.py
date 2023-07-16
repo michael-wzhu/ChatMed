@@ -1,9 +1,28 @@
-
-
 import gradio as gr
 import mdtex2html
+import urllib
+import json
+def test_service(input_text):
+    header = {'Content-Type': 'application/json'}
 
-from src.web_services.web_service_test import test_service
+    prompt = "<s>问：\n{}\n答：\n".format(input_text.strip())
+
+    data = {
+          "query": prompt,
+          "max_new_tokens": 1024,
+    }
+    request = urllib.request.Request(
+        url='http://127.0.0.1:9005/chatmed_generat',
+        headers=header,
+        data=json.dumps(data).encode('utf-8')
+    )
+    response = urllib.request.urlopen(request)
+    res = response.read().decode('utf-8')
+    result = json.loads(res)
+    # print(json.dumps(data, ensure_ascii=False, indent=2))
+    # print(json.dumps(result, ensure_ascii=False, indent=2))
+
+    return result
 
 """Override Chatbot.postprocess"""
 
@@ -77,11 +96,11 @@ def predict(input, chatbot, max_length, top_p, temperature, history):
         # temperature=temperature
     )
     response = response.get("response", "")
-
+    print(response)
+    print(parse_text(response))
     chatbot[-1] = (parse_text(input), parse_text(response))
-
     history.append((input, response))
-
+    print(history)
     yield chatbot, history
 
 
@@ -95,7 +114,6 @@ def reset_state():
 
 with gr.Blocks() as demo:
     gr.HTML("""<h1 align="center">ChatMed - Online consultations </h1>""")
-
     chatbot = gr.Chatbot()
     with gr.Row():
         with gr.Column(scale=4):
