@@ -14,7 +14,7 @@ import sys
 sys.path.append("/")
 
 
-def test_service(input_text):
+def test_service(input_text, url='http://127.0.0.1:9005/chatmed_generate'):
     header = {'Content-Type': 'application/json'}
 
     prompt = "<s>问：\n{}\n答：\n".format(input_text.strip())
@@ -24,8 +24,7 @@ def test_service(input_text):
           "max_new_tokens": 1024,
     }
     request = urllib.request.Request(
-        # url='http://127.0.0.1:9005/chatmed_generate',
-        url='http://219.228.135.162:9005/chatmed_generate',
+        url=url,
         headers=header,
         data=json.dumps(data).encode('utf-8')
     )
