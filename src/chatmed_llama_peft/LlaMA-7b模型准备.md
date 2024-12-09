@@ -20,7 +20,7 @@
 
 ```bash
 python src/chatmed_llama_peft/merge_llama_with_chinese_lora.py \
-    --base_model decapoda-research/llama-7b-hf \
+    --base_model yahma/llama-7b-hf \
     --lora_model ziqingyang/chinese-llama-plus-lora-7b,ziqingyang/chinese-alpaca-plus-lora-7b \
     --output_type huggingface \
     --output_dir ./resources/chinese-llama-alpaca-plus-lora-7b
